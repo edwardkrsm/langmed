@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Language & Media — Revision + Practice Tests</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;font-size:14px;background:#F8F7FF;color:#1a1a2e;line-height:1.6;min-height:100vh}
+/* TOP NAV */
+.topbar{background:#3C3489;color:white;padding:0;display:flex;align-items:stretch}
+.topbar-title{padding:14px 20px;font-size:15px;font-weight:500;border-right:1px solid rgba(255,255,255,.15)}
+.topnav{display:flex;gap:0}
+.topnav button{background:none;border:none;color:rgba(255,255,255,.7);padding:14px 18px;cursor:pointer;font-size:13px;font-weight:500;border-bottom:3px solid transparent;transition:all .15s}
+.topnav button:hover{color:white;background:rgba(255,255,255,.08)}
+.topnav button.active{color:white;border-bottom-color:#AFA9EC}
+.timer-box{margin-left:auto;padding:10px 20px;display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.8)}
+.timer-num{font-size:16px;font-weight:500;color:white;font-variant-numeric:tabular-nums}
+.timer-num.warn{color:#FAC775}
+.timer-num.danger{color:#F09595}
+/* MAIN */
+.page{display:none;padding:20px}
+.page.active{display:block}
+/* REVISE */
+.unit-tabs{display:flex;gap:6px;margin-bottom:16px}
+.unit-tab{padding:6px 16px;border-radius:20px;border:0.5px solid #AFA9EC;background:white;cursor:pointer;font-size:13px;font-weight:500;color:#534AB7;transition:all .15s}
+.unit-tab.active{background:#3C3489;color:white;border-color:#3C3489}
+.unit-panel{display:none}
+.unit-panel.active{display:block}
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.concept-card{background:white;border:0.5px solid #E0DFF5;border-radius:12px;padding:14px 16px;cursor:pointer;transition:box-shadow .15s}
+.concept-card:hover{box-shadow:0 2px 12px rgba(83,74,183,.12)}
+.concept-card .term{font-size:13px;font-weight:500;color:#3C3489;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.concept-card .def{font-size:12px;color:#555;display:none}
+.concept-card .eg{font-size:11px;color:#0F6E56;background:#E1F5EE;padding:2px 7px;border-radius:4px;display:inline-block;margin-top:5px;font-style:italic}
+.concept-card.open .def{display:block}
+.concept-card.open{border-color:#AFA9EC}
+.tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:6px;font-weight:500}
+.tp{background:#EEEDFE;color:#3C3489}
+.tl{background:#E1F5EE;color:#085041}
+.tg{background:#FAEEDA;color:#633806}
+.ts{background:#FAECE7;color:#712B13}
+.tgr{background:#E6F1FB;color:#0C447C}
+.ttv{background:#EAF3DE;color:#27500A}
+.ti{background:#F1EFE8;color:#444441}
+.alert{background:#E6F1FB;border-left:3px solid #378ADD;padding:8px 12px;border-radius:0 8px 8px 0;font-size:12px;margin-bottom:12px}
+.section-head{font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.05em;margin:18px 0 8px}
+/* TEST */
+.test-intro{background:white;border:0.5px solid #E0DFF5;border-radius:12px;padding:20px;margin-bottom:16px;max-width:680px}
+.test-intro h2{font-size:17px;font-weight:500;color:#3C3489;margin-bottom:8px}
+.start-btn{background:#3C3489;color:white;border:none;padding:10px 28px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;margin-top:12px}
+.start-btn:hover{background:#534AB7}
+.task-block{background:white;border:0.5px solid #E0DFF5;border-radius:12px;padding:18px 20px;margin-bottom:14px;max-width:720px}
+.task-title{font-size:14px;font-weight:500;color:#3C3489;margin-bottom:4px}
+.task-desc{font-size:12px;color:#888;margin-bottom:14px}
+.task-pts{float:right;font-size:11px;font-weight:500;background:#EEEDFE;color:#534AB7;padding:2px 8px;border-radius:8px}
+/* T/F */
+.tf-row{display:grid;grid-template-columns:1fr 80px 1fr;gap:6px;align-items:start;padding:8px 0;border-bottom:0.5px solid #F0EFF8;font-size:13px}
+.tf-row:last-child{border:none}
+.tf-stmt{color:#1a1a2e}
+.tf-btns{display:flex;gap:4px;justify-content:center}
+.tf-btn{width:34px;height:28px;border-radius:6px;border:0.5px solid #ccc;background:white;cursor:pointer;font-size:12px;font-weight:500;color:#666;transition:all .1s}
+.tf-btn.sel-T{background:#EAF3DE;border-color:#639922;color:#27500A}
+.tf-btn.sel-F{background:#FCEBEB;border-color:#E24B4A;color:#791F1F}
+.tf-correction{width:100%;padding:5px 8px;border:0.5px solid #ddd;border-radius:6px;font-size:12px;color:#333;resize:none;min-height:34px}
+.tf-correction:disabled{background:#F8F7FF;color:#aaa}
+/* SLOGANS */
+.slogan-row{display:grid;grid-template-columns:1fr 200px;gap:8px;align-items:center;padding:8px 0;border-bottom:0.5px solid #F0EFF8;font-size:13px}
+.slogan-row:last-child{border:none}
+.slogan-text{font-style:italic;color:#1a1a2e}
+.slogan-input{width:100%;padding:5px 8px;border:0.5px solid #ddd;border-radius:6px;font-size:12px;color:#333}
+/* MCQ */
+.mcq-item{margin-bottom:16px}
+.mcq-q{font-size:13px;font-weight:500;color:#1a1a2e;margin-bottom:6px}
+.mcq-opts label{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13px;margin-bottom:4px;transition:background .1s}
+.mcq-opts label:hover{background:#F8F7FF}
+.mcq-opts input[type=radio]{margin-top:2px;flex-shrink:0;accent-color:#3C3489}
+/* SHORT ANSWER */
+.sa-row{margin-bottom:12px}
+.sa-q{font-size:13px;font-weight:500;color:#1a1a2e;margin-bottom:4px}
+.sa-note{font-size:11px;color:#888;margin-bottom:4px}
+.sa-input{width:100%;padding:6px 10px;border:0.5px solid #ddd;border-radius:6px;font-size:13px;color:#333;resize:none}
+/* SUBMIT */
+.submit-row{margin-top:16px;display:flex;gap:10px;align-items:center}
+.submit-btn{background:#3C3489;color:white;border:none;padding:10px 28px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer}
+.submit-btn:hover{background:#534AB7}
+.submit-btn:disabled{background:#ccc;cursor:not-allowed}
+/* RESULTS */
+.score-banner{background:#3C3489;color:white;border-radius:12px;padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;gap:24px;max-width:680px}
+.score-big{font-size:48px;font-weight:500}
+.score-sub{font-size:13px;opacity:.8;margin-top:2px}
+.task-score{font-size:13px;color:rgba(255,255,255,.8)}
+.task-score b{color:white}
+.answer-block{background:white;border:0.5px solid #E0DFF5;border-radius:12px;padding:16px 18px;margin-bottom:12px;max-width:720px}
+.ans-row{padding:6px 0;border-bottom:0.5px solid #F0EFF8;font-size:13px;display:grid;grid-template-columns:24px 1fr;gap:6px;align-items:start}
+.ans-row:last-child{border:none}
+.correct-icon{color:#27500A;font-size:14px}
+.wrong-icon{color:#A32D2D;font-size:14px}
+.ans-detail{font-size:12px}
+.ans-your{color:#888}
+.ans-correct{color:#085041;font-weight:500}
+.ans-wrong{color:#A32D2D}
+.ans-explain{color:#555;margin-top:2px;font-style:italic}
+/* HIDDEN */
+.hidden{display:none}
+/* responsive */
+@media(max-width:600px){
+  .tf-row{grid-template-columns:1fr;gap:4px}
+  .slogan-row{grid-template-columns:1fr;gap:4px}
+  .concept-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">Language &amp; Media</div>
+  <nav class="topnav">
+    <button class="active" onclick="showPage('revise',this)">📚 Revise</button>
+    <button onclick="showPage('testA',this)">📝 Practice Test A</button>
+    <button onclick="showPage('testB',this)">📝 Practice Test B</button>
+    <button onclick="showPage('results',this)" id="results-tab" style="display:none">📊 Results</button>
+  </nav>
+  <div class="timer-box" id="timer-box" style="display:none">
+    <span style="font-size:12px">Time left:</span>
+    <span class="timer-num" id="timer-disp">60:00</span>
+  </div>
+</div>
+
+<!-- ===================== REVISE ===================== -->
+<div id="revise" class="page active">
+  <div class="alert">Click any card to expand its definition and example. All concepts are testable — content covers all 3 units from the spec.</div>
+  <div class="unit-tabs">
+    <button class="unit-tab active" onclick="showUnit('ads',this)">📢 Advertising</button>
+    <button class="unit-tab" onclick="showUnit('tv',this)">📺 TV News</button>
+    <button class="unit-tab" onclick="showUnit('int',this)">🎙️ Interviews</button>
+  </div>
+
+  <!-- ADS -->
+  <div id="ads" class="unit-panel active">
+    <div class="section-head">Phonological devices</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tp">Phono</span>Rhyme</div><div class="def">A pattern of identity of sound between words/verse-lines extending from the end to the last fully accented vowel and not further. Creates mnemonic effect.<div class="eg">"Eukanuba gives their teeth the strength they need."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tp">Phono</span>Rhythm</div><div class="def">A systematic arrangement of sounds using prosodic features — intonation, rhythm, lexical stress. Makes text memorable subconsciously.<div class="eg">"Coke really rocks!" / "drinka pinta milka day"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tp">Phono</span>Alliteration</div><div class="def">Successive stressed syllables begin with the same consonant sound. Stop consonants (p,b,m,n,t,d,k,g) are most commonly used.<div class="eg">"Performance. Prestige. Passion for Innovation." / "Where coffee meets kindness."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tp">Phono</span>Assonance</div><div class="def">Repetition of vowel sounds within words in close proximity. Creates a musical, memorable quality.<div class="eg">"The rain in Spain stays mainly in the plain."</div></div></div>
+    </div>
+
+    <div class="section-head">Graphic features</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tgr">Graphic</span>Unpredictable spelling</div><div class="def">Non-standard or creative spelling to create novelty and grab attention.<div class="eg">"Beanz Meanz Heinz" · "4ever" · "Bar B Q" · "süper"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tgr">Graphic</span>Acronyms / initials</div><div class="def">Letters of abbreviation highlighted by colour, size, or layout to create the first letters of product words.<div class="eg">"XTROVERT. XPLOSIVE. LOVE THE COLOUR. COLOR XXL"</div></div></div>
+    </div>
+
+    <div class="section-head">Lexical features</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tl">Lexical</span>Neologism</div><div class="def">Creation of a completely new word that emerges into everyday use. Different from euphemism (which softens meaning).<div class="eg">"Cookability" · "Wonderfuel" · "Siplicity" (sip + simplicity)</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tl">Lexical</span>Foreign words</div><div class="def">Used to emphasise the origin OR exclusiveness of a product in relation to a particular country.<div class="eg">"La crème de la crème of lipcolour."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tl">Lexical</span>Intertextuality</div><div class="def">A text echoes or refers to another text — literary, biblical, film, song, idiom, historical phrase, proverb, fairy tale.<div class="eg">"iThink, therefore iMac" (Descartes) · "Not all those who snack are lost" (Tolkien)</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tl">Lexical</span>Homophones</div><div class="def">Words that SOUND THE SAME but are SPELLED DIFFERENTLY. Exploited to create puns in print advertising.<div class="eg">"Sole mates for your feet" (sole/soul) · "Every kiss begins with Kay" (K/Kay)</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tl">Lexical</span>Homonymy</div><div class="def">Two words with the SAME spelling AND pronunciation but DIFFERENT, UNRELATED meanings.<div class="eg">"seal" = sea animal OR wax stamp · "fair" = market OR just/equal</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tl">Lexical</span>Pun</div><div class="def">A play on words exploiting multiple meanings (via homonymy or polysemy). Increases humour and meaning density.<div class="eg">"Coke refreshes you like no other can." (can = ability / drink container)</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tl">Lexical</span>Weasel words</div><div class="def">Words that suggest a comparison/claim WITHOUT being specific. Open comparatives ("Better") or bogus superlatives ("Best") — never state better/best than WHAT.<div class="eg">"Brown's Boots Are Better" · "helps", "virtually", "enriched", "guaranteed"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tl">Lexical</span>Ambiguity</div><div class="def">Deliberately USED in ads (not avoided) to make a phrase memorable and re-readable. Can be syntactic or semantic.<div class="eg">"Flying planes can be dangerous." (syntactic) · Puns (semantic)</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tl">Lexical</span>Collocations</div><div class="def">Familiar word combinations, often slightly deviated to create a pun and link product to a known phrase.<div class="eg">"Do you believe in love at first touch?" (deviation of "love at first sight")</div></div></div>
+    </div>
+
+    <div class="section-head">Grammatical / structural features</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tg">Grammar</span>Imperative</div><div class="def">Command verb with no explicit subject — creates direct personal address; all ads urge action. Three verb groups: acquisition (buy/get/choose), consumption (try/have/use), notice (look/see/watch).<div class="eg">"Just do it." · "Taste the rainbow." · "Don't just wear it. Feel it."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tg">Grammar</span>Present tense</div><div class="def">Most common tense in ads — conveys timelessness and universality. Simple PAST is used for storytelling and nostalgia effects.<div class="eg">Present: "It refreshes." / Past (nostalgia): "Remember when summer meant..."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tg">Grammar</span>Parallelism</div><div class="def">Repetition of formal syntactic patterns — presents two or more similar ideas in the same structural form. Creates rhythm and emphasis.<div class="eg">"Stay dry, stay happy." · "Plant one, grow many."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tg">Grammar</span>Anaphora</div><div class="def">Same word or phrase repeated at the BEGINNING of consecutive clauses/sentences.<div class="eg">"Explore the hills. Explore the rivers. Explore the mountains." · "Good hair. Good mood. Good day."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tg">Grammar</span>Epiphora</div><div class="def">Same word or phrase repeated at the END of successive clauses/sentences.<div class="eg">"See new. Hear new. Feel new." (the word "new" at the end of each clause)</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tg">Grammar</span>Ellipsis</div><div class="def">Omission of part of a grammatical structure. Saves space, creates informality, intimacy, and immediacy.<div class="eg">"Expecting guests?" = "(Are you) expecting guests?" · "Sleep like nature intended [you to]."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag tg">Grammar</span>2nd person pronouns</div><div class="def">"You / your" — used to ADDRESS the audience directly and suggest a friendly, familiar attitude. NOT first person.<div class="eg">"Your skin's new best friend." · "We know what you really want."</div></div></div>
+    </div>
+
+    <div class="section-head">Semantic / rhetorical devices</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ts">Semantic</span>Personification</div><div class="def">An inanimate object or abstract concept is spoken of as if it were a living entity with human attributes (sensations, emotions, powers of speech).<div class="eg">"They will stay on the job longer than most employees." (Volvo tyres) · "Where coffee meets kindness."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ts">Semantic</span>Simile</div><div class="def">A direct, expressed comparison between two unlike things using "like", "than", "as", or "as if".<div class="eg">"Sleep like nature intended." · "Breakfast without OJ is like a day without sunshine."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ts">Semantic</span>Metaphor</div><div class="def">A word/phrase used imaginatively to describe something else — saying X IS Y with NO comparison word. Shows the two things share qualities.<div class="eg">"Your skin's new best friend." · "One touch and she realized freedom was something you feel."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ts">Semantic</span>Metonymy</div><div class="def">Substitution of an attribute/adjunct for the whole thing — one characteristic stands for the entire entity.<div class="eg">"The press" = news media · "The Crown" = British monarchy · "I like Volvo" = I like Volvo cars</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ts">Semantic</span>Hyperbole</div><div class="def">Deliberate overstatement or exaggeration to achieve emphasis. Very common in advertising superlatives.<div class="eg">"The best just got bigger!" · "So good, it should be illegal." · "No other pain-relieving gel works like this."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ts">Semantic</span>Antithesis</div><div class="def">Uses the SAME or SIMILAR structure to express TWO OPPOSITE ideas. Creates contrast, memorability, and sharp rhythm. Based on antonyms or opposite ideas.<div class="eg">"Talks inside. Shouts outside." · "Imagine a mini phone with maximum style."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ts">Semantic</span>Presupposition</div><div class="def">Something assumed to be true without being stated — harder for readers to deny than a direct assertion.<div class="eg">"Why do leading beauty experts use Perfectil?" (assumes they do use it)</div></div></div>
+    </div>
+  </div>
+
+  <!-- TV NEWS -->
+  <div id="tv" class="unit-panel">
+    <div class="section-head">Newsworthiness — 12 news values</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Negativity</div><div class="def">Negative events (damage, injury, death, conflict, war) are the basic news value. Deviance also qualifies.<div class="eg">Disasters, crime, political conflict</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Recency</div><div class="def">The best news is something which has JUST happened. Daily cycle for press/TV; hourly for radio.<div class="eg">A murder is more newsworthy than the ongoing investigation.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Proximity</div><div class="def">Geographical closeness enhances news value. A minor local accident beats a major overseas one for local coverage.<div class="eg">The carnival coming to your town vs. the same carnival 100 miles away.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value ⭐</span>Consonance</div><div class="def">A story's compatibility with PRECONCEPTIONS about the social group or nation from which the news actors come. Editors have stereotypes about how groups behave. NOT the same as relevance.<div class="eg">Stereotypes about Latin American governments or the British royal family.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Unambiguity</div><div class="def">The clearer and more clear-cut the story, the more newsworthy. Ifs, buts, and maybes are minimal.<div class="eg">Clear-cut verdict > ambiguous trial outcome</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Unexpectedness</div><div class="def">Unpredictable or rare events are more newsworthy than routine ones. Closely related: Novelty.<div class="eg">A "man bites dog" story beats "dog bites man".</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Superlativeness</div><div class="def">The biggest, most violent, most destructive gets covered — extremes attract coverage.<div class="eg">"The worst floods in 50 years." · "The most expensive divorce in history."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Relevance</div><div class="def">The effect of a story on the audience's OWN lives or its closeness to their experience. NOT the same as proximity (which is geographical).<div class="eg">A US policy change affecting Vietnamese exports is relevant in Vietnam even if geographically distant.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Personalization</div><div class="def">Something that can be pictured in personal/individual terms is more newsworthy than a concept or a mass.<div class="eg">One identifiable victim > abstract statistics of thousands.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Eliteness</div><div class="def">Reference to elite persons (politicians, film stars) or elite First World nations makes something more newsworthy.<div class="eg">A politician's scandal > an ordinary person's similar behaviour.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Attribution</div><div class="def">The eliteness and authority of a story's sources. Highly valued sources need to be socially validated — unaffiliated individuals are not well regarded.<div class="eg">Government spokesperson > anonymous source</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">News value</span>Facticity</div><div class="def">The degree to which a story contains facts and figures: locations, names, sums of money, numbers of all kinds.<div class="eg">"A £4.2 billion deal signed in Tokyo on Tuesday."</div></div></div>
+    </div>
+
+    <div class="section-head">Language features of TV news</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Pronunciation</span>3 characteristics</div><div class="def">News readers' pronunciation must be: (1) CLEAR (2) UNDERSTANDABLE (3) STANDARD (prestige variety). Dialects that identify the speaker as an individual must be avoided.</div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Structure</span>Reduced complexity</div><div class="def">Sentences are predominantly SHORT. Complex syntactic structures (hypotaxis, multiple sub-ordination) do not occur very often. Underlying reason: RECIPIENT DESIGN — listeners can't rewind, so cognitive load must stay low.<div class="eg">Max 20 words per sentence except in unusual circumstances.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Structure</span>Active vs. passive voice</div><div class="def">ACTIVE VOICE dominates (adds drama). Passive voice used occasionally for formality — putting the object first takes attention away from the subject.</div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Structure</span>Structure-enhancing features</div><div class="def">Appositional noun phrases + attributive adjectives used to CONDENSE INFORMATION — specifically to (1) refer to a source of reported information and (2) specify the identity of persons in the news.<div class="eg">"John Smith, the company's CEO and father of three, denied the claims."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Word choice</span>3 aspects of objectivity</div><div class="def">(1) Absence of COLLOQUIAL language (2) Absence of AFFECTIVE language (anger, despair, grief) (3) Absence of PERSONAL VIEWPOINTS and opinions. All three reduce subjectivity.<div class="eg">No "this shocking tragedy" — just "the accident"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Word choice</span>Synonyms</div><div class="def">Near-synonyms are used to keep listeners INTERESTED and avoid boring repetition. If the same word is repeated more than once or twice, listeners may switch off.<div class="eg">"yacht" and "boat" used alternately in the same story</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Word choice</span>Unfamiliar words — placement</div><div class="def">An unfamiliar word or name must NEVER be put FIRST in a paragraph. Work toward it over familiar ground — approach it from a known context first.<div class="eg">Wrong: "Myocarditis was diagnosed in the patient." Right: "The patient was diagnosed with heart inflammation — myocarditis."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Word choice</span>Key word repetition</div><div class="def">Important words should be REPEATED at least once. Listeners may tune in mid-bulletin and cannot go back — repetition ensures key facts are retained.</div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Tense</span>Present tense preferred</div><div class="def">Present tense (or the tense NEAREST to the present, including continuous) is preferred. Emphasises IMMEDIACY — shows the event is current or still happening. Never waste broadcasting's advantage of immediacy.<div class="eg">"The President is meeting cabinet ministers." NOT "The President met cabinet ministers."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Other</span>Tabloidization</div><div class="def">The shift of news toward entertainment. One outcome: EMOTIONALIZATION — linguistic strategies to emotionally move and entertain the audience (colloquial language, affective lexicon). NOT desired in public service news.</div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ttv">Other</span>Recipient design</div><div class="def">The underlying reason for reduced structural complexity. Spoken TV news is designed around the receiver's cognitive limitations — listeners cannot re-read, so simple structures are essential for information retention.</div></div>
+    </div>
+  </div>
+
+  <!-- INTERVIEWS -->
+  <div id="int" class="unit-panel">
+    <div class="section-head">5 interview types</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Interview</span>Information interview</div><div class="def">Aim: find out FACTS AND FIGURES about a topic. Interviewee's personality is not relevant — only their expertise. Interviewees: usually EXPERTS, POLITICIANS, or people directly involved in the topic. Broadcast as a whole.<div class="eg">Interviewing an environmental minister about emissions quotas.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Interview</span>Opinion interview</div><div class="def">Aim: find out the VIEWPOINT of the interviewee on a specific issue, event, or development. Broadcast as a whole.<div class="eg">Asking a company chairman about protests against his factory.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Interview</span>Personality interview (portrait)</div><div class="def">Aim: reveal the LIFE, CHARACTER and EXPERIENCES of the interviewee. Questions mainly deal with personality. Broadcast as a whole.<div class="eg">"How did you get so involved in this cause?" — focuses on the person, not just the issue.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Interview</span>Research interview</div><div class="def">Aim: double-check information or research for a report/news item. Usually NOT broadcast. Used as background research by the journalist.<div class="eg">Confirming how much a company invested in environmental protection before writing a report.</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Interview ⭐</span>Statement interview</div><div class="def">Aim: yield an INDIVIDUAL STATEMENT (sound bite) that becomes part of another journalistic piece. It is an interview used as a TOOL — NOT broadcast as a whole, only the clip is used.<div class="eg">Recording a short quote to insert into a news report.</div></div></div>
+    </div>
+
+    <div class="section-head">Question types</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Closed</span>Yes/No question</div><div class="def">Only allows "yes", "no", or "I don't know". Good to PINPOINT an interviewee on a specific topic or get a definite commitment. Used at the END of the funnel structure. NOT for getting the interviewee talking.<div class="eg">"Is this true?" "Do you believe PILLCO will fulfil the contract?"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Closed</span>Information question</div><div class="def">Closed question for SHORT, PRECISE information. Good as a follow-up or to specify an issue.<div class="eg">"How many people will be rehoused?" → "Around 2,000."</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Open</span>Open question</div><div class="def">Answers are longer — gives the interviewee space to explain, elaborate, give background and personal opinions. Usually starts with What/Why/How.<div class="eg">"Why is it essential for the factory to be built here?"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Special</span>Statement + question</div><div class="def">Interviewer states a FACT and then adds a question. RISK: if the fact is wrong or unclear, the interviewee argues about the statement instead of answering.<div class="eg">"Most people oppose this project. Why haven't you moved the location?"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Special</span>Suggestive question</div><div class="def">Implies something, hoping the interviewee will react vividly. Forces the interviewee to take a stance. RISK: can be seen as provocation, damaging the interview atmosphere.<div class="eg">"So you're ready to accept that thousands of people will be uprooted?"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Special</span>Interpreting question</div><div class="def">Offers a possible INTERPRETATION of a vague or evasive answer. Forces the interviewee to confirm or deny, making their position clear for listeners.<div class="eg">"So that means the factory could not have been built anywhere else in town?"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Special ⭐</span>Indirect question</div><div class="def">Confronts the interviewee with a statement made by a THIRD PARTY. Allows the interviewer to be confrontational WITHOUT damaging the interview atmosphere — you "hide behind" the third party's remarks.<div class="eg">"Environmental groups say the factory will cause serious air pollution. What is your response?"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Badly-worded ✗</span>Either/or question</div><div class="def">AVOID: narrows the interviewee to ONLY TWO OPTIONS. They may have a third option you did not consider. Usually requires wasteful follow-up questions.<div class="eg">"Are you against this in principle, or are you primarily concerned about the environment?"</div></div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Badly-worded ✗</span>Multiple question</div><div class="def">AVOID: asking TWO OR MORE questions at once. The interviewee picks which part to answer, and you lose control. Always ask ONE question at a time.<div class="eg">"How many jobs will this create and what will it mean for the economy?"</div></div></div>
+    </div>
+
+    <div class="section-head">Interview structure</div>
+    <div class="concept-grid">
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Structure</span>Funnel structure</div><div class="def">Start with BROAD/GENERAL open questions → progressively get more SPECIFIC → end with a YES/NO question that pinpoints the interviewee on a clear statement. Leaves listeners with clear, concise information.</div></div>
+      <div class="concept-card" onclick="flip(this)"><div class="term"><span class="tag ti">Structure</span>Lead question</div><div class="def">The overall information goal of the interview. May not be asked directly, but every question should serve to answer it. Defined during preparation.<div class="eg">"How will PILLCO fulfil the environmental protection measures laid down in the contract?"</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TEST A ===================== -->
+<div id="testA" class="page">
+  <div class="test-intro" id="introA">
+    <h2>Practice Test A</h2>
+    <p style="font-size:13px;color:#555;margin-top:6px">Full simulation: 60 minutes · 45 items · 10 marks total<br>All 3 units tested: Advertisement · TV News · Interviews</p>
+    <div style="font-size:12px;color:#888;margin-top:10px;line-height:1.8">
+      Task 1 (20 pts): True/False + correct false statements<br>
+      Task 2 (20 pts): Identify one rhetorical device per slogan<br>
+      Task 3 (10 pts): Multiple choice<br>
+      Task 4 (50 pts): Short answers ≤15 words
+    </div>
+    <button class="start-btn" onclick="startTest('A')">Start Test A — 60 min timer</button>
+  </div>
+  <div id="testA-body" class="hidden">
+    <div id="testA-content"></div>
+    <div class="submit-row">
+      <button class="submit-btn" onclick="submitTest('A')">Submit Test A</button>
+      <span style="font-size:12px;color:#888">Make sure you have answered all questions before submitting.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TEST B ===================== -->
+<div id="testB" class="page">
+  <div class="test-intro" id="introB">
+    <h2>Practice Test B</h2>
+    <p style="font-size:13px;color:#555;margin-top:6px">Full simulation: 60 minutes · 45 items · 10 marks total<br>Different questions from Test A — covers the same spec.</p>
+    <div style="font-size:12px;color:#888;margin-top:10px;line-height:1.8">
+      Task 1 (20 pts): True/False + correct false statements<br>
+      Task 2 (20 pts): Identify one rhetorical device per slogan<br>
+      Task 3 (10 pts): Multiple choice<br>
+      Task 4 (50 pts): Short answers ≤15 words
+    </div>
+    <button class="start-btn" onclick="startTest('B')">Start Test B — 60 min timer</button>
+  </div>
+  <div id="testB-body" class="hidden">
+    <div id="testB-content"></div>
+    <div class="submit-row">
+      <button class="submit-btn" onclick="submitTest('B')">Submit Test B</button>
+      <span style="font-size:12px;color:#888">Make sure you have answered all questions before submitting.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== RESULTS ===================== -->
+<div id="results" class="page">
+  <div id="results-content"></div>
+</div>
+
+<script>
+// ---- DATA ----
+const TESTS = {
+A: {
+  tf: [
+    {stmt:"Alliteration is a phonological feature that uses successive stressed syllables beginning with the same vowel sound.",ans:"F",correction:"...same CONSONANT sound (not vowel sound)."},
+    {stmt:"Weasel words are comparative or superlative adjectives that suggest a comparison without specifying what the comparison is with.",ans:"T",correction:""},
+    {stmt:"Rhyme is a pattern of identity of sound between words or verse-lines extending from the end to the last fully accented vowel and not further.",ans:"T",correction:""},
+    {stmt:"Intertextuality is a grammatical feature typical of advertisements.",ans:"F",correction:"Intertextuality is a LEXICAL feature of advertisements."},
+    {stmt:"Ambiguity is deliberately avoided in advertising to make messages clearer.",ans:"F",correction:"Ambiguity is deliberately USED (not avoided) in advertising — it makes phrases memorable and re-readable."},
+    {stmt:"Present tense is commonly used in advertisement because it conveys timelessness and universality.",ans:"T",correction:""},
+    {stmt:"Second person pronouns are used in adverts to address the audience and suggest a friendly attitude.",ans:"T",correction:""},
+    {stmt:"Consonance (as a news value) is the geographical closeness of a news story to its audience.",ans:"F",correction:"That is PROXIMITY. Consonance = a story's compatibility with preconceptions about the social group or nation from which the news actors come."},
+    {stmt:"In TV news, no sentence should be longer than 30 words, except in unusual circumstances.",ans:"F",correction:"The limit is 20 words (not 30)."},
+    {stmt:"A research interview is usually broadcast as a whole to allow the audience to hear the complete exchange.",ans:"F",correction:"A research interview is usually NOT broadcast — it is conducted for the journalist's background research only."}
+  ],
+  slogans:[
+    {text:"Think different. (Apple)",ans:"Imperative",note:"Verb at start, no subject — a direct command."},
+    {text:"Because you're worth it. (L'Oréal)",ans:"Ellipsis / Presupposition",note:"Ellipsis: subject omitted '(You deserve it) because...'. Also presupposes the listener IS worth it."},
+    {text:"Melts in your mouth, not in your hands. (M&Ms)",ans:"Antithesis",note:"Two opposite statements in parallel structure: 'in your mouth' vs 'in your hands'."},
+    {text:"Red Bull gives you wings.",ans:"Metaphor / Hyperbole",note:"Wings = energy/freedom (metaphor). You cannot literally grow wings (hyperbole)."},
+    {text:"Finger lickin' good. (KFC)",ans:"Ellipsis / Colloquial",note:"Ellipsis: '(It's) finger lickin' good'. Also colloquial register ('lickin')."},
+    {text:"Stronger. Safer. Smarter. (Volvo)",ans:"Anaphora / Parallelism",note:"Each word starts a new clause in the same structure. Or simply: parallel structure of three comparatives."},
+    {text:"Have a break, have a KitKat.",ans:"Anaphora / Parallelism",note:"'Have a' repeated at the start of both clauses = anaphora. Same grammatical structure = parallelism."},
+    {text:"The best a man can get. (Gillette)",ans:"Hyperbole / Weasel words",note:"'Best' is a bogus superlative — best compared to what? This is a weasel word."},
+    {text:"Greggs — Always fresh. Never frozen.",ans:"Antithesis",note:"'Fresh' and 'frozen' are antonyms placed in parallel structure."},
+    {text:"For the journey. For the destination. For life. (Samsonite)",ans:"Anaphora / Epiphora",note:"Anaphora: 'For the' repeats at the start. The structure also builds parallelism."}
+  ],
+  mcq:[
+    {q:"What are the three aspects of word choice that increase the objectivity of TV news?",opts:["An absence of colloquial language, general absence of hypotaxis, the dominance of active voice.","An absence of affective language, an absence of colloquial language, an absence of personal viewpoints and opinions.","An absence of personal viewpoints and opinions, an absence of high structural complexity, absence of expressing the speaker's feeling."],ans:1},
+    {q:"How do TV news script writers keep listeners interested throughout a story?",opts:["Repeat the same key word more than once in a short time.","Avoid using any unfamiliar words entirely.","Use synonyms — near-synonyms prevent boring word repetition."],ans:2},
+    {q:"Which characteristic of the news reader's speech is NOT desired and is consequently missing?",opts:["Affective language","Standard pronunciation","Structural complexity"],ans:0},
+    {q:"In TV news, no sentence should be longer than ___ words, except in unusual circumstances.",opts:["10 words","20 words","30 words"],ans:1},
+    {q:"Which verb tense is most preferred in TV news reporting?",opts:["The past tense","The future tense","The present tense (or nearest to present)"],ans:2}
+  ],
+  sa:[
+    {q:"What are the three forms of interview that are broadcast as a whole?",note:"Name all three types.",ans:"Information interview, opinion interview, and personality (portrait) interview."},
+    {q:"What is the main purpose of a statement interview?",note:"Answer in ≤15 words.",ans:"To yield an individual statement or sound bite for use in a news report."},
+    {q:"What is the risk of using a suggestive question in an interview?",note:"Answer in ≤15 words.",ans:"The interviewee may see it as provocation and the interview atmosphere is damaged."},
+    {q:"In the funnel structure, with what type of question does an interview typically end?",note:"Answer in ≤15 words.",ans:"A yes/no question that pins the interviewee down to a clear, definite statement."},
+    {q:"What are the two types of badly-worded questions that should be avoided in interviews?",note:"Answer in ≤15 words.",ans:"Either/or questions and multiple questions (asking more than one thing at a time)."},
+    {q:"What are the three characteristics of a news reader's pronunciation?",note:"Answer in ≤15 words.",ans:"Clear, understandable, and standard (prestige variety — no personal dialect)."},
+    {q:"Among the 12 news values, what does 'personalization' mean?",note:"Answer in ≤15 words.",ans:"Something that can be pictured in personal/individual terms is more newsworthy than a concept or mass."},
+    {q:"What is the function of appositional noun phrases and attributive adjectives in TV news?",note:"Answer in ≤15 words.",ans:"To condense information — to specify the identity of persons and cite sources."},
+    {q:"Why must unfamiliar words never be placed first in a paragraph in TV news?",note:"Answer in ≤15 words.",ans:"Listeners cannot process an unfamiliar word without familiar context — they will miss what follows."},
+    {q:"Give an example of antithesis in advertising.",note:"Any correct example accepted.",ans:"E.g. 'Talks inside. Shouts outside.' / 'Imagine a mini phone with maximum style.'"}
+  ]
+},
+B: {
+  tf: [
+    {stmt:"Epiphora is the repetition of the same word or phrase at the beginning of successive clauses or sentences.",ans:"F",correction:"That is ANAPHORA. Epiphora = repetition at the END of successive clauses."},
+    {stmt:"A pun is a play on words that exploits multiple meanings, increasing humour and meaning density.",ans:"T",correction:""},
+    {stmt:"Rhythm refers to a systematic arrangement of sounds created by repeating the last fully accented vowels.",ans:"F",correction:"That partial definition describes RHYME. Rhythm = systematic arrangement of sounds using prosodic features (intonation, stress, rhythm)."},
+    {stmt:"Foreign words are used in advertisements to emphasise the origin or exclusiveness of a product.",ans:"T",correction:""},
+    {stmt:"Parallelism is a figure of speech that uses the same structure to express two opposite ideas.",ans:"F",correction:"That is ANTITHESIS. Parallelism = repetition of formal syntactic patterns to present similar ideas in similar structural forms."},
+    {stmt:"In TV news, the present tense is preferred because it emphasises the immediacy of the event.",ans:"T",correction:""},
+    {stmt:"A statement interview is an example of an interview to be broadcast as a whole.",ans:"F",correction:"A statement interview is an interview used as a TOOL — only the clip (sound bite) is broadcast, not the whole interview."},
+    {stmt:"Personification involves directly speaking of an inanimate object as if it were a living entity with human attributes.",ans:"T",correction:""},
+    {stmt:"Homophones are words that have the same spelling but different meanings.",ans:"F",correction:"That is HOMONYMY. Homophones = words that SOUND THE SAME but are spelled DIFFERENTLY."},
+    {stmt:"The relevance of a news story is its compatibility with preconceptions about the social group from which the news actors come.",ans:"F",correction:"That is CONSONANCE. Relevance = the effect of a story on the audience's own lives or closeness to their experience."}
+  ],
+  slogans:[
+    {text:"Open happiness. (Coca-Cola)",ans:"Imperative / Metaphor",note:"'Open' is an imperative. Happiness as something you can open = metaphor."},
+    {text:"Every little helps. (Tesco)",ans:"Ellipsis / Parallelism",note:"Ellipsis: '(Every little [bit]) helps.' Very compressed sentence."},
+    {text:"Connecting people. (Nokia)",ans:"Ellipsis / Metaphor",note:"Ellipsis: '(We are) connecting people.' Also a metaphor — a phone literally connects calls, but figuratively connects people."},
+    {text:"Impossible is nothing. (Adidas)",ans:"Antithesis / Intertextuality",note:"Antithesis: 'impossible' vs 'nothing' (opposites). Also echoes Muhammad Ali's quote 'Impossible is just a word.'"},
+    {text:"The car in front is a Toyota.",ans:"Metaphor / Presupposition",note:"Presupposes Toyota is always ahead — always the best. Also functions as a boast about market leadership."},
+    {text:"Life's too short for the wrong job. (Monster.com)",ans:"Hyperbole / Ellipsis",note:"Hyperbole: exaggeration of life's brevity to make the point. Ellipsis: no main verb in 'life's too short'."},
+    {text:"A diamond is forever. (De Beers)",ans:"Metaphor / Hyperbole",note:"Diamond = permanence (metaphor). 'Forever' = hyperbolic permanence. One of the most famous ad lines."},
+    {text:"Don't dream it. Drive it. (Jaguar)",ans:"Anaphora / Imperative / Antithesis",note:"'Don't/Drive' — parallel imperative structure. 'Dream' vs 'Drive' = antithesis (passive fantasy vs active reality). Alliteration (D)."},
+    {text:"Maybe she's born with it. Maybe it's Maybelline.",ans:"Anaphora / Parallelism",note:"'Maybe' repeats at the start of both sentences = anaphora. Also parallelism in structure."},
+    {text:"Heinz Meanz Beanz.",ans:"Neologism / Unpredictable spelling / Rhyme",note:"Creative spelling: 'Meanz/Beanz' — unpredictable graphic feature. Also rhyme (meanz/beanz)."}
+  ],
+  mcq:[
+    {q:"Which of the following best describes 'recipient design' in TV news language?",opts:["The news is designed to appeal to the widest possible demographic.","Sentence structure is kept simple because spoken information cannot be re-read or rewound.","The news is designed with the recipient's entertainment preferences in mind."],ans:1},
+    {q:"In TV news, when are structure-enhancing linguistic features (appositional noun phrases, attributive adjectives) typically used?",opts:["To add rhetorical effect and make the news more persuasive.","To refer to a source of reported information and to specify the identity of persons in the news.","To replace active voice constructions with more formal passive structures."],ans:1},
+    {q:"What is the main reason TV news script writers should avoid beginning a paragraph with an unfamiliar word?",opts:["It sounds too academic and alienates ordinary viewers.","Listeners cannot process it without familiar context and will miss what follows.","Unfamiliar words slow down the news reader's delivery."],ans:1},
+    {q:"What is one outcome of tabloidization in television news?",opts:["Increased use of passive voice and complex sentence structures.","Emotionalization — language strategies that emotionally move or entertain the audience.","A stronger emphasis on facticity and attribution in reporting."],ans:1},
+    {q:"Which question type allows an interviewer to be confrontational with an interviewee without damaging the interview atmosphere?",opts:["Suggestive question","Indirect question","Statement-plus-question"],ans:1}
+  ],
+  sa:[
+    {q:"What is the main difference between a simile and a metaphor?",note:"Answer in ≤15 words.",ans:"Similes use comparison words (like/as/than); metaphors directly state one thing IS another."},
+    {q:"What type of interview mainly deals with the life, character, and experiences of the interviewee?",note:"Answer in ≤15 words.",ans:"A personality interview (also called a portrait interview)."},
+    {q:"What is the benefit of asking an indirect question in an interview?",note:"Answer in ≤15 words.",ans:"Allows the interviewer to be confrontational without damaging the interview atmosphere."},
+    {q:"What is the risk of asking a statement-plus-question in an interview?",note:"Answer in ≤15 words.",ans:"If the stated fact is incorrect, the interviewee argues the statement instead of answering."},
+    {q:"What are the two types of badly-worded questions that should be avoided in interviews?",note:"Answer in ≤15 words.",ans:"Either/or questions and multiple questions (asking more than one thing at once)."},
+    {q:"What are the three characteristics of a news reader's pronunciation?",note:"Answer in ≤15 words.",ans:"Clear, understandable, and standard (prestige variety — no personal dialect)."},
+    {q:"Among the 12 news values, what is 'consonance'?",note:"Answer in ≤15 words.",ans:"A story's compatibility with preconceptions about the social group or nation involved."},
+    {q:"What underlies the tendency towards reduced structural complexity in TV news?",note:"Answer in ≤15 words.",ans:"Recipient design — listeners cannot rewind, so sentences must be short and cognitively simple."},
+    {q:"Why is it important to use up-to-date tenses in TV news?",note:"Answer in ≤15 words.",ans:"To emphasise immediacy — to show the event is current or still happening as the audience watches."},
+    {q:"Give an example of epiphora in advertising.",note:"Any correct example accepted.",ans:"E.g. 'See new. Hear new. Feel new.' (the word 'new' ends each clause)."}
+  ]
+}
+};
+
+// ---- STATE ----
+let timers={A:null,B:null};
+let timeLeft={A:3600,B:3600};
+let testStarted={A:false,B:false};
+let answers={A:{tf:[],slogans:[],mcq:[],sa:[]},B:{tf:[],slogans:[],mcq:[],sa:[]}};
+let scores={};
+
+// ---- NAVIGATION ----
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.topnav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  // pause timer if leaving test
+  ['A','B'].forEach(t=>{
+    const tb=document.getElementById('timer-box');
+    if(id==='test'+t && testStarted[t]){
+      tb.style.display='flex'; resumeTimer(t);
+    } else {
+      if(timers[t]) clearInterval(timers[t]);
+      if(id!=='testA'&&id!=='testB') tb.style.display='none';
+    }
+  });
+}
+
+function showUnit(id,btn){
+  document.querySelectorAll('.unit-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.unit-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function flip(el){el.classList.toggle('open');}
+
+// ---- TIMER ----
+function startTimer(t){
+  clearInterval(timers[t]);
+  timers[t]=setInterval(()=>{
+    timeLeft[t]--;
+    const m=Math.floor(timeLeft[t]/60);
+    const s=timeLeft[t]%60;
+    const disp=document.getElementById('timer-disp');
+    if(disp){
+      disp.textContent=m+':'+(s<10?'0':'')+s;
+      disp.className='timer-num'+(timeLeft[t]<=300?' danger':timeLeft[t]<=600?' warn':'');
+    }
+    if(timeLeft[t]<=0){clearInterval(timers[t]);submitTest(t);}
+  },1000);
+}
+function resumeTimer(t){startTimer(t);}
+
+// ---- BUILD TEST ----
+function startTest(t){
+  testStarted[t]=true;
+  document.getElementById('intro'+t).style.display='none';
+  document.getElementById('test'+t+'-body').classList.remove('hidden');
+  document.getElementById('timer-box').style.display='flex';
+  document.getElementById('timer-disp').textContent='60:00';
+  buildTest(t);
+  startTimer(t);
+}
+
+function buildTest(t){
+  const data=TESTS[t];
+  let html='';
+
+  // TASK 1
+  html+=`<div class="task-block">
+  <div class="task-title">Task 1 · True / False <span class="task-pts">20 pts</span></div>
+  <div class="task-desc">Write T (true) or F (false) next to each statement. If false, write the correction.</div>`;
+  data.tf.forEach((item,i)=>{
+    html+=`<div class="tf-row">
+      <div class="tf-stmt">${i+1}. ${item.stmt}</div>
+      <div class="tf-btns">
+        <button class="tf-btn" id="${t}-tf-T-${i}" onclick="selectTF('${t}',${i},'T')">T</button>
+        <button class="tf-btn" id="${t}-tf-F-${i}" onclick="selectTF('${t}',${i},'F')">F</button>
+      </div>
+      <textarea class="tf-correction" id="${t}-tf-corr-${i}" placeholder="Correction (if false)..." disabled></textarea>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  // TASK 2
+  html+=`<div class="task-block">
+  <div class="task-title">Task 2 · Identify one rhetorical device <span class="task-pts">20 pts</span></div>
+  <div class="task-desc">Write ONE linguistic/rhetorical feature for each slogan.</div>`;
+  data.slogans.forEach((item,i)=>{
+    html+=`<div class="slogan-row">
+      <div class="slogan-text">${i+1}. "${item.text}"</div>
+      <input class="slogan-input" id="${t}-sl-${i}" placeholder="Feature..." />
+    </div>`;
+  });
+  html+=`</div>`;
+
+  // TASK 3
+  html+=`<div class="task-block">
+  <div class="task-title">Task 3 · Multiple choice <span class="task-pts">10 pts</span></div>
+  <div class="task-desc">Choose the single best answer for each question.</div>`;
+  data.mcq.forEach((item,i)=>{
+    html+=`<div class="mcq-item"><div class="mcq-q">${i+1}. ${item.q}</div><div class="mcq-opts">`;
+    item.opts.forEach((opt,j)=>{
+      html+=`<label><input type="radio" name="${t}-mcq-${i}" value="${j}"> ${String.fromCharCode(65+j)}. ${opt}</label>`;
+    });
+    html+=`</div></div>`;
+  });
+  html+=`</div>`;
+
+  // TASK 4
+  html+=`<div class="task-block">
+  <div class="task-title">Task 4 · Short answers <span class="task-pts">50 pts</span></div>
+  <div class="task-desc">Answer each question in no more than 15 words.</div>`;
+  data.sa.forEach((item,i)=>{
+    html+=`<div class="sa-row">
+      <div class="sa-q">${i+1}. ${item.q}</div>
+      <div class="sa-note">${item.note}</div>
+      <textarea class="sa-input" id="${t}-sa-${i}" rows="2" placeholder="Your answer..."></textarea>
+    </div>`;
+  });
+  html+=`</div>`;
+
+  document.getElementById('test'+t+'-content').innerHTML=html;
+}
+
+function selectTF(t,i,val){
+  document.getElementById(t+'-tf-T-'+i).className='tf-btn'+(val==='T'?' sel-T':'');
+  document.getElementById(t+'-tf-F-'+i).className='tf-btn'+(val==='F'?' sel-F':'');
+  const corr=document.getElementById(t+'-tf-corr-'+i);
+  corr.disabled=(val==='T');
+  if(val==='T') corr.value='';
+}
+
+// ---- SUBMIT + SCORE ----
+function submitTest(t){
+  clearInterval(timers[t]);
+  document.getElementById('timer-box').style.display='none';
+  const data=TESTS[t];
+  let tfScore=0,slScore=0,mcqScore=0,saScore=0;
+  let resultHTML=`<div class="score-banner">`;
+
+  // collect answers
+  const tfResults=data.tf.map((item,i)=>{
+    const sel=document.querySelector(`.tf-btn.sel-T[id="${t}-tf-T-${i}"]`)?'T':
+              document.querySelector(`.tf-btn.sel-F[id="${t}-tf-F-${i}"]`)?'F':'';
+    const corr=(document.getElementById(t+'-tf-corr-'+i)||{}).value||'';
+    const correct=sel===item.ans;
+    if(correct) tfScore+=2;
+    return{sel,corr,correct,item};
+  });
+
+  const slResults=data.slogans.map((item,i)=>{
+    const inp=(document.getElementById(t+'-sl-'+i)||{}).value||'';
+    return{inp,item};
+  });
+  slScore='—';
+
+  const mcqResults=data.mcq.map((item,i)=>{
+    const sel=document.querySelector(`input[name="${t}-mcq-${i}"]:checked`);
+    const val=sel?parseInt(sel.value):-1;
+    const correct=val===item.ans;
+    if(correct) mcqScore+=1;
+    return{val,correct,item};
+  });
+
+  const saResults=data.sa.map((item,i)=>{
+    const inp=(document.getElementById(t+'-sa-'+i)||{}).value||'';
+    return{inp,item};
+  });
+  saScore='—';
+
+  const totalAuto=tfScore+mcqScore;
+
+  resultHTML+=`<div>
+    <div class="score-big">${tfScore+mcqScore}<span style="font-size:22px;opacity:.6">/30</span></div>
+    <div class="score-sub">Auto-scored (T/F + MCQ)</div>
+    <div class="score-sub" style="margin-top:4px">Tasks 2 & 4 require self-marking — see below</div>
+  </div>
+  <div style="border-left:1px solid rgba(255,255,255,.2);padding-left:24px">
+    <div class="task-score">Task 1 T/F: <b>${tfScore}/20</b></div>
+    <div class="task-score">Task 3 MCQ: <b>${mcqScore}/5</b></div>
+    <div class="task-score">Task 2 slogans: <b>self-mark /20</b></div>
+    <div class="task-score">Task 4 short answers: <b>self-mark /50</b></div>
+  </div></div>`;
+
+  // T/F detail
+  resultHTML+=`<div class="answer-block"><div style="font-size:14px;font-weight:500;color:#3C3489;margin-bottom:12px">Task 1 — True/False answers</div>`;
+  tfResults.forEach((r,i)=>{
+    const icon=r.correct?'✓':'✗';
+    const cl=r.correct?'correct-icon':'wrong-icon';
+    resultHTML+=`<div class="ans-row">
+      <span class="${cl}">${icon}</span>
+      <div class="ans-detail">
+        <div>${i+1}. ${r.item.stmt}</div>
+        <div class="${r.correct?'ans-correct':'ans-wrong'}">Answer: <b>${r.item.ans}</b> ${r.item.ans==='F'?'— '+r.item.correction:''}</div>
+        ${!r.correct?`<div class="ans-your">Your answer: ${r.sel||'(not answered)'}</div>`:''}
+      </div>
+    </div>`;
+  });
+  resultHTML+=`</div>`;
+
+  // Slogans detail
+  resultHTML+=`<div class="answer-block"><div style="font-size:14px;font-weight:500;color:#3C3489;margin-bottom:8px">Task 2 — Slogans (self-mark: any ONE correct feature = full credit)</div>`;
+  slResults.forEach((r,i)=>{
+    resultHTML+=`<div class="ans-row">
+      <span style="font-size:13px;color:#534AB7;font-weight:500">${i+1}.</span>
+      <div class="ans-detail">
+        <div style="font-style:italic">"${r.item.text}"</div>
+        <div class="ans-correct">Accepted: ${r.item.ans}</div>
+        <div class="ans-explain">${r.item.note}</div>
+        <div class="ans-your">Your answer: ${r.inp||'(blank)'}</div>
+      </div>
+    </div>`;
+  });
+  resultHTML+=`</div>`;
+
+  // MCQ detail
+  resultHTML+=`<div class="answer-block"><div style="font-size:14px;font-weight:500;color:#3C3489;margin-bottom:8px">Task 3 — Multiple choice</div>`;
+  mcqResults.forEach((r,i)=>{
+    const icon=r.correct?'✓':'✗';
+    const cl=r.correct?'correct-icon':'wrong-icon';
+    resultHTML+=`<div class="ans-row">
+      <span class="${cl}">${icon}</span>
+      <div class="ans-detail">
+        <div>${i+1}. ${r.item.q}</div>
+        <div class="${r.correct?'ans-correct':'ans-wrong'}">Correct: ${String.fromCharCode(65+r.item.ans)}. ${r.item.opts[r.item.ans]}</div>
+        ${!r.correct?`<div class="ans-your">Your answer: ${r.val>=0?String.fromCharCode(65+r.val)+'. '+r.item.opts[r.val]:'(not answered)'}</div>`:''}
+      </div>
+    </div>`;
+  });
+  resultHTML+=`</div>`;
+
+  // SA detail
+  resultHTML+=`<div class="answer-block"><div style="font-size:14px;font-weight:500;color:#3C3489;margin-bottom:8px">Task 4 — Short answers (compare with model answer; self-mark)</div>`;
+  saResults.forEach((r,i)=>{
+    resultHTML+=`<div class="ans-row">
+      <span style="font-size:13px;color:#534AB7;font-weight:500">${i+1}.</span>
+      <div class="ans-detail">
+        <div style="font-weight:500">${r.item.q}</div>
+        <div class="ans-correct">Model: ${r.item.ans}</div>
+        <div class="ans-your">Your answer: ${r.inp||'(blank)'}</div>
+      </div>
+    </div>`;
+  });
+  resultHTML+=`</div>`;
+
+  document.getElementById('results-content').innerHTML=resultHTML;
+  document.getElementById('results-tab').style.display='';
+  showPage('results',document.getElementById('results-tab'));
+  document.querySelectorAll('.topnav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('results-tab').classList.add('active');
+}
+</script>
+</body>
+</html>
